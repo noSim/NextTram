@@ -6,7 +6,7 @@ import com.sbaechle.nexttram.R
 import com.sbaechle.nexttram.common.adapter.ViewType
 import com.sbaechle.nexttram.common.adapter.ViewTypeDelegateAdapter
 import com.sbaechle.nexttram.common.inflate
-import com.sbaechle.nexttram.display.model.ArrivalItem
+import com.sbaechle.nexttram.display.model.DepartureItem
 import kotlinx.android.synthetic.main.tram_arrival_item.view.*
 
 /**
@@ -20,13 +20,13 @@ class TrainArrivalDelegateAdapter : ViewTypeDelegateAdapter {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: ViewType) {
         holder as TrainArrivalHolder
-        holder.bind(item as ArrivalItem)
+        holder.bind(item as DepartureItem)
     }
 
     class TrainArrivalHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             parent.inflate(R.layout.tram_arrival_item)) {
 
-        fun bind(item: ArrivalItem) = with(itemView) {
+        fun bind(item: DepartureItem) = with(itemView) {
             routeName.text = item.route
             destination.text = item.destination
             time.text = item.time
