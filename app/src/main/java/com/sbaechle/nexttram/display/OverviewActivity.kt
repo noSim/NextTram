@@ -31,7 +31,7 @@ class OverviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_overview)
 
-        initAdapter();
+        initAdapter()
 
         val subscription = departureRepo.getArrivals("id")
                 .subscribeOn(Schedulers.io())
