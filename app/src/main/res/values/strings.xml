@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NextTram</string>
     <string name="btn_refresh">Refresh</string>
+    <string name="train_arriving_now">jetzt</string>
 </resources>

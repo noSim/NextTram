@@ -43,16 +43,6 @@ class DepartureListProvider(context: Context, intent: Intent) : RemoteViewsServi
         {
             items.add(item)
         }
-        //items.add(DepartureItem("S9","Nirgends", "0", System.currentTimeMillis().toString()))
-        //items.add(DepartureItem("S11","Ettlingen", "1", "10 min"))
-        //items.add(DepartureItem(intent.getBundleExtra("departureItem")))
-
-        /*val data = intent.getParcelableArrayListExtra<DepartureItem>("departure_data")
-        if (data != null) {
-            for (item in data) {
-                items.add(item)
-            }
-        }*/
     }
 
     override fun onCreate() {

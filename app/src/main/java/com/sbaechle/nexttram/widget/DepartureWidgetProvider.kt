@@ -1,5 +1,6 @@
 package com.sbaechle.nexttram.widget
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
@@ -14,8 +15,9 @@ import com.sbaechle.nexttram.widget.adapter.DepartureWidgetService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import android.content.ComponentName
-import android.os.Bundle
 import com.google.gson.Gson
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.internal.disposables.DisposableContainer
 
 
 /**
@@ -24,36 +26,52 @@ import com.google.gson.Gson
 
 class DepartureWidgetProvider : AppWidgetProvider() {
 
+    companion object {
+        private val REFRESH_ACTION: String = "com.sbaechle.nexttram.departureWidgetProvider.REFRESH_ACTION"
+    }
+
     private val departureRepo by lazy { DepartureRepository() }
+    private val subscriptions= CompositeDisposable()
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
 
         if (appWidgetIds != null) {
             val widgetCount = appWidgetIds.size - 1
             for (i in 0..widgetCount) {
-                val widgetId = appWidgetIds[i]
-
-                val subscription = departureRepo.getArrivals("id")
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                {retrieveArrivals ->
-                                    showNewData(ArrayList(retrieveArrivals), appWidgetManager, widgetId, context )
-                                },
-                                {
-                                    e -> Log.d("OverviewActivity", e.message)}
-                        )
+                updateData(context)
             }
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
     }
 
-    private fun  showNewData(retrieveArrivals: ArrayList<DepartureItem>?, appWidgetManager: AppWidgetManager?, widgetId: Int, context: Context?) {
+    override fun onReceive(context: Context?, intent: Intent) {
+        val action: String = intent.action
+        if (action.equals(REFRESH_ACTION)) {
+            updateData(context)
+        }
+
+        super.onReceive(context, intent)
+    }
+
+    private fun updateData(context: Context?) {
+        val subscription = departureRepo.getArrivals("id")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        {retrieveArrivals ->
+                            showNewData(ArrayList(retrieveArrivals), AppWidgetManager.getInstance(context), context )
+                        },
+                        {
+                            e -> Log.d("OverviewActivity", e.message)}
+                )
+        subscriptions.add(subscription)
+    }
+
+    private fun  showNewData(retrieveArrivals: ArrayList<DepartureItem>?, appWidgetManager: AppWidgetManager?,  context: Context?) {
         val view: RemoteViews = RemoteViews(context?.packageName, R.layout.departure_widget)
 
         val intent: Intent = Intent(context, DepartureWidgetService::class.java)
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
         intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
 
         //put as json because Parcel doesen´t work here
@@ -64,9 +82,23 @@ class DepartureWidgetProvider : AppWidgetProvider() {
         view.setRemoteAdapter(R.id.departureTrainList, intent)
         view.setEmptyView(R.id.departureTrainList, R.id.empty_view)
 
-        val cn = ComponentName(context, DepartureWidgetProvider::class.java)
-        appWidgetManager?.notifyAppWidgetViewDataChanged(widgetId, R.id.departureTrainList);
-        appWidgetManager?.updateAppWidget(widgetId, view)
+        //refresh button
+        val onRefreshClickIntent = Intent(context, DepartureWidgetProvider::class.java)
+        onRefreshClickIntent.action = DepartureWidgetProvider.REFRESH_ACTION
+        val refreshPendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0,
+                onRefreshClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        view.setOnClickPendingIntent(R.id.btn_refresh, refreshPendingIntent)
+
+        //update
+        appWidgetManager?.updateAppWidget(ComponentName(context, DepartureWidgetProvider::class.java.name), null)
+        appWidgetManager?.updateAppWidget(ComponentName(context, DepartureWidgetProvider::class.java.name), view)
+        appWidgetManager?.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(ComponentName(context, DepartureWidgetProvider::class.java.name)), R.id.departureTrainList);
+        //appWidgetManager?.updateAppWidget(widgetId, view)
+    }
+
+    override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
+        //subscriptions.dispose() //TODO wrong place to dispose -> find the right place
+        super.onDeleted(context, appWidgetIds)
     }
 
 }
