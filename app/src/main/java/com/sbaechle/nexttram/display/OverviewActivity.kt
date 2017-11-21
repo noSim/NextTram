@@ -1,5 +1,6 @@
 package com.sbaechle.nexttram.display
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -7,6 +8,7 @@ import android.util.Log
 import com.sbaechle.nexttram.R
 import com.sbaechle.nexttram.data.DepartureRepository
 import com.sbaechle.nexttram.display.adapter.TrainArrivalAdapter
+import com.sbaechle.nexttram.display.model.DepartureItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

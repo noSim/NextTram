@@ -12,7 +12,8 @@
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="S1" />
+        android:text="S1"
+        android:textColor="@color/widgetColorText" />
 
     <TextView
         android:id="@+id/destination"
@@ -21,7 +22,8 @@
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Ettlingen" />
+        android:text="Ettlingen"
+        android:textColor="@color/widgetColorText" />
 
     <TextView
         android:id="@+id/time"
@@ -33,5 +35,6 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:gravity="right"
-        android:text="2 min" />
+        android:text="2 min"
+        android:textColor="@color/widgetColorText" />
 </LinearLayout>

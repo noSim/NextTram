@@ -5,6 +5,8 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.sbaechle.nexttram.R
 import com.sbaechle.nexttram.data.DepartureRepository
 import com.sbaechle.nexttram.display.adapter.TrainArrivalAdapter
@@ -31,17 +33,26 @@ class DepartureListProvider(context: Context, intent: Intent) : RemoteViewsServi
     }
 
     fun updateWidgetListView() {
-        val jo: String = intent.getStringExtra("hanspeter")
         items.clear()
-        items.add(DepartureItem("S9","Nirgends", "0", System.currentTimeMillis().toString()))
-        items.add(DepartureItem("S11","Ettlingen", "1", "10 min"))
-        items.add(DepartureItem(jo, "jo", "jo", "jo"))
-        val data = intent.getParcelableArrayListExtra<DepartureItem>("departure_data")
+
+        val departuresAsJson: String = intent.getStringExtra("departureList")
+        val gson = Gson()
+        var departureList: List<DepartureItem> = gson.fromJson(departuresAsJson, object : TypeToken<List<DepartureItem>>() {}.type)
+
+        for (item in departureList)
+        {
+            items.add(item)
+        }
+        //items.add(DepartureItem("S9","Nirgends", "0", System.currentTimeMillis().toString()))
+        //items.add(DepartureItem("S11","Ettlingen", "1", "10 min"))
+        //items.add(DepartureItem(intent.getBundleExtra("departureItem")))
+
+        /*val data = intent.getParcelableArrayListExtra<DepartureItem>("departure_data")
         if (data != null) {
             for (item in data) {
                 items.add(item)
             }
-        }
+        }*/
     }
 
     override fun onCreate() {

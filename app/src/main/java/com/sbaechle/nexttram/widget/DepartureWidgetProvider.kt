@@ -14,7 +14,8 @@ import com.sbaechle.nexttram.widget.adapter.DepartureWidgetService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import android.content.ComponentName
-
+import android.os.Bundle
+import com.google.gson.Gson
 
 
 /**
@@ -50,18 +51,21 @@ class DepartureWidgetProvider : AppWidgetProvider() {
 
     private fun  showNewData(retrieveArrivals: ArrayList<DepartureItem>?, appWidgetManager: AppWidgetManager?, widgetId: Int, context: Context?) {
         val view: RemoteViews = RemoteViews(context?.packageName, R.layout.departure_widget)
-        view.setTextViewText(R.id.stationName, retrieveArrivals!!.get(1).destination)
 
         val intent: Intent = Intent(context, DepartureWidgetService::class.java)
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
         intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-        intent.putExtra("hanspeter", "geht das?")
-        //intent.putParcelableArrayListExtra("departure_data",retrieveArrivals)
+
+        //put as json because Parcel doesen´t work here
+        val gson = Gson()
+        val list: String = gson.toJson(retrieveArrivals)
+        intent.putExtra("departureList", list)
+
         view.setRemoteAdapter(R.id.departureTrainList, intent)
         view.setEmptyView(R.id.departureTrainList, R.id.empty_view)
 
-        //val cn = ComponentName(context, DepartureWidgetProvider::class.java)
-        //appWidgetManager?.notifyAppWidgetViewDataChanged(widgetId, R.id.departureTrainList);
+        val cn = ComponentName(context, DepartureWidgetProvider::class.java)
+        appWidgetManager?.notifyAppWidgetViewDataChanged(widgetId, R.id.departureTrainList);
         appWidgetManager?.updateAppWidget(widgetId, view)
     }
 

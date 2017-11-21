@@ -19,6 +19,7 @@ class DepartureRepository (private val api: RestAPI = RestAPI()) {
 
             if (response.isSuccessful) {
                 val departures = response.body().departures.map {
+                    val time = if (it.time.equals("0")) "jetzt" else it.time
                     DepartureItem(it.route, it.destination, it.direction, it.time)
                 }
                 subscriber.onNext(departures)
