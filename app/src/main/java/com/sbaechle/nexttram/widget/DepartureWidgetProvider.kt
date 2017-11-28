@@ -17,7 +17,6 @@ import io.reactivex.schedulers.Schedulers
 import android.content.ComponentName
 import com.google.gson.Gson
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.disposables.DisposableContainer
 
 
 /**
@@ -34,13 +33,7 @@ class DepartureWidgetProvider : AppWidgetProvider() {
     private val subscriptions= CompositeDisposable()
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
-
-        if (appWidgetIds != null) {
-            val widgetCount = appWidgetIds.size - 1
-            for (i in 0..widgetCount) {
-                updateData(context)
-            }
-        }
+        updateData(context)
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
     }
@@ -72,7 +65,11 @@ class DepartureWidgetProvider : AppWidgetProvider() {
         val view: RemoteViews = RemoteViews(context?.packageName, R.layout.departure_widget)
 
         val intent: Intent = Intent(context, DepartureWidgetService::class.java)
-        intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
+        // workaround to generate a new RemoteViewsFactory after every update
+        val randomNumber = (Math.random() * 1000).toInt()
+        intent.data = (Uri.fromParts("content", randomNumber.toString(), null))
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, randomNumber)
+
 
         //put as json because Parcel doesen´t work here
         val gson = Gson()

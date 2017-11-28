@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="widgetBackgroundDark">#272626</color>
     <color name="widgetColorText">#eccd72</color>
+    <color name="widgetColorTextDark">#988349</color>
 </resources>

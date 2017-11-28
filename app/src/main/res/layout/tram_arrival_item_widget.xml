@@ -6,6 +6,16 @@
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/direction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="S1"
+        android:textColor="@color/widgetColorTextDark" />
+
+    <TextView
         android:id="@+id/routeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

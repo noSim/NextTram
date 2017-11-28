@@ -2,17 +2,12 @@ package com.sbaechle.nexttram.widget.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sbaechle.nexttram.R
-import com.sbaechle.nexttram.data.DepartureRepository
-import com.sbaechle.nexttram.display.adapter.TrainArrivalAdapter
 import com.sbaechle.nexttram.display.model.DepartureItem
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 /**
  * Created by sbaechle on 20.11.2017.
@@ -22,9 +17,6 @@ class DepartureListProvider(context: Context, intent: Intent) : RemoteViewsServi
     private var items: ArrayList<DepartureItem>
     private val contxt: Context
     private val intent: Intent
-
-    private val departureRepo by lazy { DepartureRepository() }
-
 
     init {
         items = ArrayList()
@@ -68,10 +60,24 @@ class DepartureListProvider(context: Context, intent: Intent) : RemoteViewsServi
     override fun getViewAt(position: Int): RemoteViews {
         val remoteViews = RemoteViews(contxt.packageName, R.layout.tram_arrival_item_widget)
         val thisItem = items.get(position)
+        val direction: String = getDirectionString(thisItem.direction);
         remoteViews.setTextViewText(R.id.routeName, thisItem.route)
         remoteViews.setTextViewText(R.id.destination, thisItem.destination)
         remoteViews.setTextViewText(R.id.time, thisItem.time)
+        remoteViews.setTextViewText(R.id.direction, direction)
         return remoteViews
+    }
+
+    private fun  getDirectionString(direction: String): String {
+        if (direction.equals("1")) {
+            return "<"
+        }
+        else if (direction.equals("2")) {
+            return ">"
+        }
+        else {
+            return " "
+        }
     }
 
     override fun getCount(): Int {
