@@ -16,3 +16,14 @@ data class Departures (
         val time: String,
         val realtime: Boolean
 )
+
+data class Stops (
+        val stops: List<Station>
+)
+
+data class Station (
+        val id: String,
+        val name: String,
+        val lat: String,
+        val lon: String
+)

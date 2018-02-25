@@ -1,5 +1,6 @@
 package com.sbaechle.nexttram.data.restApi
 
+import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,5 +15,10 @@ interface KVVApi {
     fun getDepartures(@Path("stationId") stationId: String,
                       @Query("maxinfo") maxinfo: String = "10",
                       @Query("key") key: String = "377d840e54b59adbe53608ba1aad70e8"
-    ): Call<DeparturesResponse>
+    ): Observable<DeparturesResponse>
+
+    @GET("stops/byname/{stopName}")
+    fun getStationByName(@Path("stopName") stopName: String,
+                         @Query("key") key: String = "377d840e54b59adbe53608ba1aad70e8"
+    ): Observable<Stops>
 }

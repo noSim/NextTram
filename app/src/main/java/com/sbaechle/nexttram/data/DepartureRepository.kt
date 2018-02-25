@@ -2,6 +2,7 @@ package com.sbaechle.nexttram.data
 
 import android.content.res.Resources
 import com.sbaechle.nexttram.R
+import com.sbaechle.nexttram.data.restApi.DeparturesResponse
 import com.sbaechle.nexttram.data.restApi.RestAPI
 import com.sbaechle.nexttram.display.model.DepartureItem
 import io.reactivex.Observable
@@ -13,23 +14,13 @@ import io.reactivex.Observable
 
 class DepartureRepository (private val api: RestAPI = RestAPI()) {
     fun getArrivals(stationId: String): Observable<List<DepartureItem>> {
-        return Observable.create {
-            subscriber ->
 
-            val callResponse = api.getDepartures("de:8212:1")
-            val response = callResponse.execute()
-
-            if (response.isSuccessful) {
-                val departures = response.body().departures.map {
+        return api.getDepartures("de:8212:1").switchMap {
+                response: DeparturesResponse -> Observable.just( response.departures.map {
                     val time = if (it.time.equals("0")) "jetzt" else it.time //TODO get string "jetzt" from ressources!
                     DepartureItem(it.route, it.destination, it.direction, time)
-                }
-                subscriber.onNext(departures)
-
-            } else {
-              subscriber.onError(Throwable(response.message()))
-            }
-
+                    }
+                )
         }
     }
 }

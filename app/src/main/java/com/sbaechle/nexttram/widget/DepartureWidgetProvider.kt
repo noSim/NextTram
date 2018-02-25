@@ -16,6 +16,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import android.content.ComponentName
 import com.google.gson.Gson
+import com.sbaechle.nexttram.display.OverviewActivity
+import com.sbaechle.nexttram.settings.SettingsActivity
 import io.reactivex.disposables.CompositeDisposable
 
 
@@ -56,7 +58,8 @@ class DepartureWidgetProvider : AppWidgetProvider() {
                             showNewData(ArrayList(retrieveArrivals), AppWidgetManager.getInstance(context), context )
                         },
                         {
-                            e -> Log.d("OverviewActivity", e.message)}
+                            e -> Log.d("OverviewActivity", e.message)
+                        }
                 )
         subscriptions.add(subscription)
     }
@@ -85,6 +88,11 @@ class DepartureWidgetProvider : AppWidgetProvider() {
         val refreshPendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0,
                 onRefreshClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         view.setOnClickPendingIntent(R.id.btn_refresh, refreshPendingIntent)
+
+        //open settings
+        val onSettingsClickIntent = Intent(context, SettingsActivity::class.java)
+        val openSettingsPendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, onSettingsClickIntent,0)
+        view.setOnClickPendingIntent(R.id.stationName, openSettingsPendingIntent)
 
         //update
         appWidgetManager?.updateAppWidget(ComponentName(context, DepartureWidgetProvider::class.java.name), null)
